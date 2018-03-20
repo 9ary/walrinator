@@ -69,7 +69,7 @@ def doit(chat_id, match, original):
 
 @client.on(events.NewMessage(pattern=re.compile(r"^s/((?:\\/|[^/])+)/((?:\\/|[^/])*)(/.*)?")))
 def on_regex(event):
-    if not event.is_private:
+    if not event.is_private or event.forward:
         return
 
     chat_id = utils.get_peer_id(event.input_chat)
