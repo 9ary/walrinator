@@ -51,6 +51,7 @@ def doit(chat_id, match, original):
                 return original, s
         except Exception as e:
             return None, f"u dun goofed m8: {str(e)}"
+        return None, None
 
     # Try matching the last few messages
     global last_msgs
