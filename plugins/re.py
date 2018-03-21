@@ -11,15 +11,7 @@ logger = logging.getLogger(__name__)
 
 # Heavily based on https://github.com/SijmenSchoon/regexbot/blob/master/regexbot.py
 
-last_msgs = defaultdict(deque)
-
-def save_msg(chat_id, message):
-    global last_msgs
-
-    if chat_id not in last_msgs:
-        last_msgs[chat_id] = deque(maxlen=10)
-
-    last_msgs[chat_id].append(message)
+last_msgs = defaultdict(lambda: deque(maxlen=10))
 
 def doit(chat_id, match, original):
     fr = match.group(1)
@@ -44,29 +36,24 @@ def doit(chat_id, match, original):
         else:
             return None, f"Unknown flag: {f}"
 
+    def actually_doit(original):
+        try:
+            s, i = regex.subn(fr, to, original.message, count=count, flags=flags)
+            if i > 0:
+                return original, s
+        except Exception as e:
+            return None, f"u dun goofed m8: {str(e)}"
+        return None, None
+
     if original is not None:
-        try:
-            s, i = regex.subn(fr, to, original.message, count=count, flags=flags)
-            if i > 0:
-                return original, s
-        except Exception as e:
-            return None, f"u dun goofed m8: {str(e)}"
+        return actually_doit(original)
+    else:
+        # Try matching the last few messages
+        for original in reversed(last_msgs[chat_id]):
+            m, s = actually_doit(original)
+            if s is not None:
+                return m, s
         return None, None
-
-    # Try matching the last few messages
-    global last_msgs
-    if chat_id not in last_msgs:
-        return None, None
-
-    for original in reversed(last_msgs[chat_id]):
-        try:
-            s, i = regex.subn(fr, to, original.message, count=count, flags=flags)
-            if i > 0:
-                return original, s
-        except Exception as e:
-            return None, f"u dun goofed m8: {str(e)}"
-
-    return None, None
 
 @client.on(events.NewMessage(pattern=re.compile(r"^s/((?:\\/|[^/])+)/((?:\\/|[^/])*)(/.*)?")))
 def on_regex(event):
@@ -79,7 +66,7 @@ def on_regex(event):
 
     if m is not None:
         out = client.send_message(event.input_chat, s, reply_to=m.id)
-        save_msg(chat_id, out)
+        last_msgs[chat_id].append(out)
     elif s is not None:
         event.reply(s)
 
@@ -91,4 +78,4 @@ def on_message(event):
         return
 
     chat_id = utils.get_peer_id(event.input_chat)
-    save_msg(chat_id, event.message)
+    last_msgs[chat_id].append(event.message)
