@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 snips = {
         "shrug": "¯\_(ツ)_/¯",
         "lenny": " ( ͡° ͜ʖ ͡°) ",
+        "telugu": "జ్ఞా",
         }
 
 @client.on(events.NewMessage(outgoing=True, pattern=re.compile(r"^!(\w+)$")))
