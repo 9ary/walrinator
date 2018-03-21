@@ -3,7 +3,7 @@ import re
 
 from telethon import events
 
-from walrinator import client
+from __main__ import client
 
 @client.on(events.NewMessage(incoming=True, pattern=re.compile(r"(?i)(I'm|im|.+(am|are|is))\s+trash$")))
 def trash(event):

@@ -5,7 +5,7 @@ import re
 import regex
 from telethon import events, utils
 
-from walrinator import client
+from __main__ import client
 
 logger = logging.getLogger(__name__)
 
