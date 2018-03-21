@@ -5,7 +5,7 @@ from telethon import events
 
 from walrinator import client
 
-@client.on(events.NewMessage(incoming=True, pattern=re.compile(r"(?i)(am|are|is) trash$")))
+@client.on(events.NewMessage(incoming=True, pattern=re.compile(r"(?i)(I'm|im|.+(am|are|is))\s+trash$")))
 def trash(event):
     event.reply("and so am i")
 
