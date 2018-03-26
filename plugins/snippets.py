@@ -12,6 +12,8 @@ snips = {
         "shrug": "¯\_(ツ)_/¯",
         "lenny": " ( ͡° ͜ʖ ͡°) ",
         "telugu": "జ్ఞా",
+        "look": "ಠ_ಠ",
+        "qtshrug": "^(^.^)^",
         }
 
 @client.on(events.NewMessage(outgoing=True, pattern=re.compile(r"^!(\w+)$")))
