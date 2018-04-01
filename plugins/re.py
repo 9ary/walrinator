@@ -55,11 +55,9 @@ def doit(chat_id, match, original):
                 return m, s
         return None, None
 
-
 def group_has_regex(group):
     return any(getattr(x, 'username', None) == 'regexbot'
                for x in client.get_participants(group, search='@regexbot'))
-
 
 @client.on(events.NewMessage(pattern=re.compile(r"^s/((?:\\/|[^/])+)/((?:\\/|[^/])*)(/.*)?")))
 def on_regex(event):
@@ -78,7 +76,6 @@ def on_regex(event):
         event.reply(s)
 
     raise events.StopPropagation
-
 
 @client.on(events.NewMessage)
 def on_message(event):
