@@ -55,9 +55,16 @@ def doit(chat_id, match, original):
                 return m, s
         return None, None
 
+
+def group_has_regex(group):
+    return any(getattr(x, 'username', None) == 'regexbot'
+               for x in client.get_participants(group, search='@regexbot'))
+
+
 @client.on(events.NewMessage(pattern=re.compile(r"^s/((?:\\/|[^/])+)/((?:\\/|[^/])*)(/.*)?")))
 def on_regex(event):
-    if not event.is_private or event.forward:
+    if event.forward or (
+            not event.is_private and group_has_regex(event.input_chat)):
         return
 
     chat_id = utils.get_peer_id(event.input_chat)
@@ -72,10 +79,8 @@ def on_regex(event):
 
     raise events.StopPropagation
 
+
 @client.on(events.NewMessage)
 def on_message(event):
-    if not event.is_private:
-        return
-
     chat_id = utils.get_peer_id(event.input_chat)
     last_msgs[chat_id].append(event.message)
